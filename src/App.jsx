@@ -59,31 +59,6 @@ const App = () => {
         data.ventesMinEstimees = Math.floor(data.nombreEvaluations * 0.9);
       }
 
-      // Extraction des 5 derniers commentaires
-      const comments = [];
-      const lines = text.split('\n');
-      let commentCount = 0;
-
-      for (let i = 0; i < lines.length && commentCount < 5; i++) {
-        const line = lines[i].trim();
-        const nextLine = lines[i + 1]?.trim() || '';
-        
-        // Pattern pour détecter les commentaires avec **utilisateur**
-        if (line.startsWith('**') && line.includes('**') && line.toLowerCase().includes('il y a')) {
-          const userMatch = line.match(/^\*\*([^*]+)\*\*/);
-          const timeMatch = line.match(/il y a ([^*]+)$/i);
-          
-          if (userMatch && timeMatch && userMatch[1] !== 'Vinted') {
-            comments.push({
-              user: userMatch[1].trim(),
-              time: timeMatch[1].trim(),
-              text: !nextLine.startsWith('**') ? nextLine : ''
-            });
-            commentCount++;
-          }
-        }
-      }
-
       data.comments = comments;
 
       if (!data.boutique) {
@@ -130,24 +105,6 @@ const App = () => {
       head: [['Métrique', 'Valeur']],
       body: info
     });
-    
-    // Commentaires
-    if (profileData.comments && profileData.comments.length > 0) {
-      doc.setFontSize(16);
-      doc.text('Derniers commentaires', 20, doc.lastAutoTable.finalY + 20);
-      
-      const comments = profileData.comments.map(c => [
-        c.user,
-        c.time,
-        c.text
-      ]);
-      
-      doc.autoTable({
-        startY: doc.lastAutoTable.finalY + 25,
-        head: [['Utilisateur', 'Date', 'Commentaire']],
-        body: comments
-      });
-    }
     
     // Sauvegarde du PDF
     doc.save(`vintalyze-${profileData.boutique}.pdf`);
@@ -240,27 +197,6 @@ const App = () => {
                   )}
                 </ul>
               </div>
-
-              {profileData.comments && profileData.comments.length > 0 && (
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h3 className="font-bold mb-2">Derniers commentaires ({profileData.comments.length})</h3>
-                  <div className="max-h-96 overflow-y-auto">
-                    <ul className="space-y-2">
-                      {profileData.comments.map((comment, index) => (
-                        <li key={index} className="border-b border-gray-200 pb-2 last:border-b-0">
-                          <span className="font-medium">{comment.user}</span>
-                          {' - '}
-                          <span className="text-gray-600">{comment.time}</span>
-                          {comment.text && (
-                            <p className="text-gray-800 mt-1">{comment.text}</p>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              )}
-            </div>
 
             <div className="space-y-8">
               <div>
