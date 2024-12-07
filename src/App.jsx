@@ -59,8 +59,6 @@ const App = () => {
         data.ventesMinEstimees = Math.floor(data.nombreEvaluations * 0.9);
       }
 
-      data.comments = comments;
-
       if (!data.boutique) {
         throw new Error('Impossible de trouver le nom de la boutique');
       }
